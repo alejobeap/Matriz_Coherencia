@@ -1,0 +1,3 @@
+nombre_volcan lon lat distancia
+Chillan -71.378 -36.868 20
+Socompa -68.246 -24.396 20
