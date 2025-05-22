@@ -46,18 +46,22 @@ for CARPETA in "${CARPETAS[@]}"; do
   ((PASO_ACTUAL++))
   PORCENTAJE=$(( PASO_ACTUAL * 100 / TOTAL_PASOS ))
   echo "[$PORCENTAJE%] Copiando $GEO_FOLDER en $CARPETA/geo..."
-  scp -r "$RUTA_BASE/$CARPETA/$GEO_FOLDER/"* "$CARPETA/geo/" 2>/dev/null
-
+  #scp -r "$RUTA_BASE/$CARPETA/$GEO_FOLDER/"* "$CARPETA/geo/" 2>/dev/null
+  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/$GEO_FOLDER/"* "$CARPETA/geo/" 2>/dev/null
 
   ((PASO_ACTUAL++))
   PORCENTAJE=$(( PASO_ACTUAL * 100 / TOTAL_PASOS ))
   echo "[$PORCENTAJE%] Copiando RSLC en $CARPETA..."
-  scp -r "$RUTA_BASE/$CARPETA/RSLC/" "$CARPETA/" 2>/dev/null
+  #scp -r "$RUTA_BASE/$CARPETA/RSLC/" "$CARPETA/" 2>/dev/null
+  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/RSLC/" "$CARPETA/" 2>/dev/null
+
 
   ((PASO_ACTUAL++))
   PORCENTAJE=$(( PASO_ACTUAL * 100 / TOTAL_PASOS ))
   echo "[$PORCENTAJE%] Copiando SLC en $CARPETA..."
-  scp -r "$RUTA_BASE/$CARPETA/SLC/" "$CARPETA/" 2>/dev/null
+#  scp -r "$RUTA_BASE/$CARPETA/SLC/" "$CARPETA/" 2>/dev/null
+  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/SLC/" "$CARPETA/" 2>/dev/null
+
 
   # Al final de cada carpeta, clonar repo y mover contenido
   echo "Clonando Matriz_Coherencia en $CARPETA..."
@@ -66,7 +70,10 @@ for CARPETA in "${CARPETAS[@]}"; do
     git clone https://github.com/alejobeap/Matriz_Coherencia.git
     mv Matriz_Coherencia/* ./
     rm -rf Matriz_Coherencia
+    sbatch --qos=high --output=Multilook.out --error=Multilook.err --job-name=MKIFS -n 8 --time=23:59:00 --mem=65536 -p comet --account=comet_lics --partition=standard --wrap="./multilookRSLC.sh"
+
   )
 done
 
 echo "Proceso finalizado."
+
