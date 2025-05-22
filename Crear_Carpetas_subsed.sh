@@ -33,10 +33,21 @@ PASO_ACTUAL=0
 for CARPETA in "${CARPETAS[@]}"; do
   mkdir -p "$CARPETA/geo"
   
+# Check if geo.m or geo exists and copy accordingly
+  if [ -d "$RUTA_BASE/$CARPETA/geo.m" ]; then
+    GEO_FOLDER="geo.m"
+  elif [ -d "$RUTA_BASE/$CARPETA/geo" ]; then
+    GEO_FOLDER="geo"
+  else
+    echo "No se encontró carpeta geo.m o geo en $RUTA_BASE/$CARPETA"
+    continue
+  fi
+
   ((PASO_ACTUAL++))
   PORCENTAJE=$(( PASO_ACTUAL * 100 / TOTAL_PASOS ))
-  echo "[$PORCENTAJE%] Copiando geo.m en $CARPETA/geo..."
-  scp -r "$RUTA_BASE/$CARPETA/geo.m/" "$CARPETA/geo/" 2>/dev/null
+  echo "[$PORCENTAJE%] Copiando $GEO_FOLDER en $CARPETA/geo..."
+  scp -r "$RUTA_BASE/$CARPETA/$GEO_FOLDER/"* "$CARPETA/geo/" 2>/dev/null
+
 
   ((PASO_ACTUAL++))
   PORCENTAJE=$(( PASO_ACTUAL * 100 / TOTAL_PASOS ))
