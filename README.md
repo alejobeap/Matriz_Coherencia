@@ -1,4 +1,4 @@
-Instrucciones para crear la Matriz de Coherencia y crear una lista de interferogramas largos para el caso de los volcanes de Chile
+** Instrucciones para crear la Matriz de Coherencia y crear una lista de interferogramas largos para el caso de los volcanes de Chile
 
 1. Identificar el ID con el codigo 
 python ../VER_Nombre_volcan.py Socompa
@@ -26,4 +26,4 @@ Processing date: 20141109
 Files for 20141109 are missing. Generating with multilookRSLC...
     Multilooking image 20141109 multilook factor 7 [range] 2 [azimuth]
    
-5. 
+4. 
