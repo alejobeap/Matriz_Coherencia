@@ -32,6 +32,8 @@ PASO_ACTUAL=0
 
 for CARPETA in "${CARPETAS[@]}"; do
   mkdir -p "$CARPETA/geo"
+  mkdir -p "$CARPETA/RSLC"
+  mkdir -p "$CARPETA/SLC"
   
 # Check if geo.m or geo exists and copy accordingly
   if [ -d "$RUTA_BASE/$CARPETA/geo.m" ]; then
@@ -53,14 +55,14 @@ for CARPETA in "${CARPETAS[@]}"; do
   PORCENTAJE=$(( PASO_ACTUAL * 100 / TOTAL_PASOS ))
   echo "[$PORCENTAJE%] Copiando RSLC en $CARPETA..."
   #scp -r "$RUTA_BASE/$CARPETA/RSLC/" "$CARPETA/" 2>/dev/null
-  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/RSLC/" "$CARPETA/" 2>/dev/null
+  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/RSLC/" "$CARPETA/RSLC/" 2>/dev/null
 
 
   ((PASO_ACTUAL++))
   PORCENTAJE=$(( PASO_ACTUAL * 100 / TOTAL_PASOS ))
   echo "[$PORCENTAJE%] Copiando SLC en $CARPETA..."
 #  scp -r "$RUTA_BASE/$CARPETA/SLC/" "$CARPETA/" 2>/dev/null
-  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/SLC/" "$CARPETA/" 2>/dev/null
+  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/SLC/" "$CARPETA/SLC/" 2>/dev/null
 
 
   # Al final de cada carpeta, clonar repo y mover contenido
@@ -70,7 +72,8 @@ for CARPETA in "${CARPETAS[@]}"; do
     git clone https://github.com/alejobeap/Matriz_Coherencia.git
     mv Matriz_Coherencia/* ./
     rm -rf Matriz_Coherencia
-    sbatch --qos=high --output=Multilook.out --error=Multilook.err --job-name=MKIFS -n 8 --time=23:59:00 --mem=65536 -p comet --account=comet_lics --partition=standard --wrap="./multilookRSLC.sh"
+    chmod +x *.sh
+    sbatch --qos=high --output=Multilook.out --error=Multilook.err --job-name=Multilook_$CARPETA -n 8 --time=23:59:00 --mem=65536 -p comet --account=comet_lics --partition=standard --wrap="./multilookRSLC.sh"
 
   )
 done
