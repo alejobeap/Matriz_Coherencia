@@ -109,17 +109,17 @@ def main():
         average, standar = crop_and_calculate_average(file_path, min_lon, max_lon, min_lat, max_lat, save_image=save_image)
 
         if average is not None:
-            results.append({"volcano": nombre_volcan, "date": date_path, "average": average})
-            resultsstd.append({"volcano": nombre_volcan, "date": date_path, "standar": standar})
+            results.append({"date": date_path, "average": average})
+            resultsstd.append({"date": date_path, "standar": standar})
 
     # Guardar resultados en un archivo de texto
     with open(output_txt, "w") as f:
         for result in results:
-            f.write(f"{result['volcano']} {result['date']} {result['average']:.4f}\n")
+            f.write(f"{result['date']} {result['average']:.4f}\n")
 
     with open(output_txt_std, "w") as f:
         for resultstd in resultsstd:
-            f.write(f"{resultstd['volcano']} {resultstd['date']} {resultstd['standar']:.4f}\n")
+            f.write(f"{resultstd['date']} {resultstd['standar']:.4f}\n")
 
 
 if __name__ == "__main__":
