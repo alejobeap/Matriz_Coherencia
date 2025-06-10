@@ -59,8 +59,9 @@ generate_combinations() {
 > "$OUTPUT_FILE"
 
 # Generate combinations for 2, 3, and 6 months
-generate_combinations 2
+generate_combinations 12
 generate_combinations 3
 generate_combinations 6
+generate_combinations 9
 
 echo "Combinations written to $OUTPUT_FILE"
