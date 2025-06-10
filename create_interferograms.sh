@@ -10,6 +10,12 @@ if [ ! -f "$INPUT_FILE" ]; then
     exit 1
 fi
 
+if [ -f "$OUTPUT_FILE" ]; then
+    echo "Output file $OTPUT_FILE found erase!"
+    rm -rf $OUTUT_FILE
+fi
+
+
 # Read dates into an array
 dates=($(cat "$INPUT_FILE"))
 
