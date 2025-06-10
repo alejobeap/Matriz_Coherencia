@@ -2,7 +2,7 @@
 
 # File containing the list of dates (one date per line in YYYYMMDD format)
 INPUT_FILE="listarslc.txt"
-OUTPUT_FILE="output_averages_from_cc_tifs.txt"
+OUTPUT_FILE="combination.txt"
 
 # Ensure the input file exists
 if [ ! -f "$INPUT_FILE" ]; then
@@ -10,11 +10,13 @@ if [ ! -f "$INPUT_FILE" ]; then
     exit 1
 fi
 
+# Clear the output file
 if [ -f "$OUTPUT_FILE" ]; then
-    echo "Output file $OTPUT_FILE found erase!"
-    rm -rf $OUTUT_FILE
+    echo "Output file $OUTPUT_FILE found. Erasing!"
+    > "$OUTPUT_FILE"
+else
+    > "$OUTPUT_FILE"
 fi
-
 
 # Read dates into an array
 dates=($(cat "$INPUT_FILE"))
@@ -44,7 +46,7 @@ is_excluded_month() {
 # Generate combinations for intervals, excluding dates in May to September
 generate_combinations() {
     local interval=$1
-    echo "Generating combinations for interval of $interval months..."
+    echo "Generating combinations for interval of $interval months..." >> "$OUTPUT_FILE"
     for ((i = 0; i < ${#dates[@]}; i++)); do
         if is_excluded_month "${dates[i]}"; then
             continue # Skip if the start date is in the excluded range
@@ -54,20 +56,18 @@ generate_combinations() {
                 continue # Skip if the end date is in the excluded range
             fi
             diff=$(month_diff "${dates[i]}" "${dates[j]}")
-            if ((diff >= interval)); then
+            if ((diff == interval)); then
                 echo "${dates[i]}_${dates[j]}" >> "$OUTPUT_FILE"
+            elif ((diff > interval)); then
+                break # Skip further iterations once the difference exceeds the interval
             fi
         done
     done
 }
 
-# Clear the output file
-> "$OUTPUT_FILE"
+# Generate combinations for specified intervals
+for interval in 12 9 6 3; do
+    generate_combinations "$interval"
+done
 
-# Generate combinations for 2, 3, and 6 months
-generate_combinations 12
-generate_combinations 3
-generate_combinations 6
-generate_combinations 9
-
-echo "Combinations written to $OUTPUT_FILE"
+echo "Combinations written to $OUTPUT_FILE. Please check for a maximum of 12 months difference."
