@@ -67,6 +67,17 @@ plt.title("Matrix of Coherence")
 plt.xlabel("Date2")
 plt.ylabel("Date1")
 
+# Add `nigs` value in the top-left corner
+plt.text(
+    x=-0.1,  # Adjust based on plot dimensions
+    y=1.05,  # Adjust based on plot dimensions
+    s=f"IFS: {nifgs}",
+    fontsize=10,
+    transform=plt.gca().transAxes  # Use axes-relative coordinates
+)
+
+
+
 # Guardar la imagen
 plt.tight_layout()
 
@@ -104,6 +115,16 @@ plt.colorbar(label="Coherence")
 plt.title("Matrix Filtrada of Coherence")
 plt.xlabel("Date2")
 plt.ylabel("Date1")
+
+# Add `nigs` value in the top-left corner
+plt.text(
+    x=-0.1,  # Adjust based on plot dimensions
+    y=1.05,  # Adjust based on plot dimensions
+    s=f"IFS: {nifgs}",
+    fontsize=10,
+    transform=plt.gca().transAxes  # Use axes-relative coordinates
+)
+
 
 # Guardar la imagen
 plt.tight_layout()
