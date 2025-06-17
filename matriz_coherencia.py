@@ -63,7 +63,7 @@ plt.imshow(matrix, cmap=cmap, aspect="auto", origin="upper")
 plt.xticks(ticks=range(len(unique_dates2)), labels=unique_dates2, rotation=90, fontsize=8)
 plt.yticks(ticks=range(len(unique_dates1)), labels=unique_dates1, fontsize=8)
 plt.colorbar(label="Coherence")
-plt.title("Matrix of Coherence")
+plt.title(f"Matrix of Coherence All (IFS:{nifgs})")
 plt.xlabel("Date2")
 plt.ylabel("Date1")
 
@@ -92,13 +92,14 @@ print(f"Imagen guardada como {output_file}")
 
 
 
-
+nifgs=0
 # Rellenar la matriz con los valores de coherencia
 for _, row in df.iterrows():
     if row["coherence"]>mean_value:
       i = unique_dates1.index(row["date1"])
       j = unique_dates2.index(row["date2"])
       matrix_filt[i, j] = row["coherence"]
+      nifgs=nifgs+1
     else:
       continue
 
@@ -112,7 +113,7 @@ plt.imshow(matrix_filt, cmap=cmap, aspect="auto", origin="upper")
 plt.xticks(ticks=range(len(unique_dates2)), labels=unique_dates2, rotation=90, fontsize=8)
 plt.yticks(ticks=range(len(unique_dates1)), labels=unique_dates1, fontsize=8)
 plt.colorbar(label="Coherence")
-plt.title("Matrix Filtrada of Coherence")
+plt.title("Filter Coherence Matrix (IFS:{nifgs})")
 plt.xlabel("Date2")
 plt.ylabel("Date1")
 
