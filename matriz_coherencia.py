@@ -1,6 +1,29 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import os
+import sys
+
+# Define file paths
+# Get the parent and current directory names
+current_dir = os.path.basename(os.getcwd())
+parent_dir = os.path.basename(os.path.dirname(os.getcwd()))
+mean_file = f"mean_value_{parent_dir}_{current_dir}.txt"
+
+# Check if mean file exists
+if not os.path.isfile(mean_file):
+    print(f"Error: Mean value file {mean_file} does not exist.")
+    sys.exit(1)
+
+# Read the mean value from the text file
+try:
+    with open(mean_file, 'r') as file:
+        mean_value = float(file.readline().split()[0])  # Assumes the format is "Mean: value"
+    print(f"Mean value read from file: {mean_value}")
+except Exception as e:
+    print(f"Error reading mean value from file: {e}")
+    sys.exit(1)
+
 
 # Cargar los datos del archivo
 file_path = "output_averages_from_cc_tifs.txt"
@@ -46,7 +69,10 @@ plt.ylabel("Date1")
 
 # Guardar la imagen
 plt.tight_layout()
-output_file = "mnatris.png"
+
+output_file = f"matrix_{parent_dir}_{current_dir}.png"
+
+#output_file = "mnatris.png"
 plt.savefig(output_file, dpi=100)
 plt.close()
 
@@ -58,7 +84,7 @@ print(f"Imagen guardada como {output_file}")
 
 # Rellenar la matriz con los valores de coherencia
 for _, row in df.iterrows():
-    if row["coherence"]>0.25:
+    if row["coherence"]>mean_value:
       i = unique_dates1.index(row["date1"])
       j = unique_dates2.index(row["date2"])
       matrix_filt[i, j] = row["coherence"]
@@ -81,7 +107,10 @@ plt.ylabel("Date1")
 
 # Guardar la imagen
 plt.tight_layout()
-output_file = "filtered_matriz.png"
+
+output_file = f"filtered_matrix_{parent_dir}_{current_dir}.png"
+
+#output_file = "filtered_matriz.png"
 plt.savefig(output_file, dpi=100)
 plt.close()
 
