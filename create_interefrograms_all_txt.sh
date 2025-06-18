@@ -4,6 +4,7 @@
 INPUT_FILE="listarslc.txt"
 OUTPUT_FILE="combination_all.txt"
 OUTPUT_FILE_1="combination_longs.txt"
+OUTPUT_FILE_2="combination_shorts.txt"
 
 
 # Ensure the input file exists
@@ -27,6 +28,14 @@ if [ -f "$OUTPUT_FILE_1" ]; then
     > "$OUTPUT_FILE_1"
 else
     > "$OUTPUT_FILE_1"
+fi
+
+# Clear the output file
+if [ -f "$OUTPUT_FILE_2" ]; then
+    echo "Output file $OUTPUT_FILE_2 found. Erasing!"
+    > "$OUTPUT_FILE_2"
+else
+    > "$OUTPUT_FILE_2"
 fi
 
 
@@ -76,6 +85,7 @@ generate_connections_for_date() {
         local diff_months=$(month_diff "$start_date" "$end_date")
         if ((diff_days > 6 && diff_days <= 40)); then
             echo "${start_date}_${end_date}" >> "$OUTPUT_FILE"
+            echo "${start_date}_${end_date}" >> "$OUTPUT_FILE_2"
         fi
     done
 
