@@ -33,6 +33,17 @@ fi
 # Read dates into an array
 dates=($(cat "$INPUT_FILE"))
 
+
+is_excluded_month() {
+    local date="$1"
+    local month=$((10#${date:4:2})) # Strip leading zero
+    if ((month >= 5 && month <= 9)); then
+        return 0 # Excluded
+    else
+        return 1 # Not excluded
+    fi
+}
+
 # Function to calculate the difference in days between two dates
 day_diff() {
     local start_date="$1"
