@@ -114,3 +114,20 @@ for ((i = 0; i < ${#dates[@]}; i++)); do
 done
 
 echo "Combinations written to $OUTPUT_FILE. Please check for a maximum of 12 months difference."
+
+# Abrir el archivo de entrada y leer las líneas
+with open("$INPUT_FILE", 'r') as f:
+    lines = f.readlines()
+
+# Crear combinaciones según la lógica descrita
+combinations = []
+for i in range(len(lines)):
+    for j in range(i + 1, min(i + 5, len(lines))):
+        combinations.append(f"{lines[i].strip()} to {lines[j].strip()}")
+
+# Guardar las combinaciones en un archivo de salida
+with open("$OUTPUT_FILE_2", 'w') as f:
+    for combo in combinations:
+        f.write(combo + '\n')
+
+
