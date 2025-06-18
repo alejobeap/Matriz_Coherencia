@@ -2,6 +2,7 @@
 
 # Script to create a 'log' directory and run the LiCSAR_03_mk_ifgs.py script with specified arguments
 tracks=$(basename "$(pwd)")
+name=$(basename "$(dirname "$(pwd)")")
 
 # Create the 'log' directory
 mkdir -p log
