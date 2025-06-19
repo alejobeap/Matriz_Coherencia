@@ -47,12 +47,13 @@ matrix = np.full((len(unique_dates1), len(unique_dates2)), np.nan)
 
 matrix_filt = np.full((len(unique_dates1), len(unique_dates2)), np.nan)
 
-
+nifgs=0
 # Rellenar la matriz con los valores de coherencia
 for _, row in df.iterrows():
     i = unique_dates1.index(row["date1"])
     j = unique_dates2.index(row["date2"])
     matrix[i, j] = row["coherence"]
+    nifgs=nifgs+1
 
 # Graficar la matriz
 plt.figure(figsize=(25, 15))
@@ -63,19 +64,18 @@ plt.imshow(matrix, cmap=cmap, aspect="auto", origin="upper")
 plt.xticks(ticks=range(len(unique_dates2)), labels=unique_dates2, rotation=90, fontsize=8)
 plt.yticks(ticks=range(len(unique_dates1)), labels=unique_dates1, fontsize=8)
 plt.colorbar(label="Coherence")
-plt.title(f"Matrix of Coherence All (IFS:{nifgs})")
+plt.title(f"Coherence Matrix (All longs IFS:{nifgs})")
 plt.xlabel("Date2")
 plt.ylabel("Date1")
 
 # Add `nigs` value in the top-left corner
-plt.text(
-    x=-0.1,  # Adjust based on plot dimensions
-    y=1.05,  # Adjust based on plot dimensions
-    s=f"IFS: {nifgs}",
-    fontsize=10,
-    transform=plt.gca().transAxes  # Use axes-relative coordinates
-)
-
+#plt.text(
+#    x=-0.1,  # Adjust based on plot dimensions
+#    y=1.05,  # Adjust based on plot dimensions
+#    s=f"IFS: {nifgs}", 
+#    fontsize=10, 
+#    transform=plt.gca().transAxes  # Use axes-relative coordinates
+#)
 
 
 # Guardar la imagen
@@ -113,18 +113,18 @@ plt.imshow(matrix_filt, cmap=cmap, aspect="auto", origin="upper")
 plt.xticks(ticks=range(len(unique_dates2)), labels=unique_dates2, rotation=90, fontsize=8)
 plt.yticks(ticks=range(len(unique_dates1)), labels=unique_dates1, fontsize=8)
 plt.colorbar(label="Coherence")
-plt.title("Filter Coherence Matrix (IFS:{nifgs})")
+plt.title(f"Filter Coherence Matrix (IFS:{nifgs})")
 plt.xlabel("Date2")
 plt.ylabel("Date1")
 
 # Add `nigs` value in the top-left corner
-plt.text(
-    x=-0.1,  # Adjust based on plot dimensions
-    y=1.05,  # Adjust based on plot dimensions
-    s=f"IFS: {nifgs}",
-    fontsize=10,
-    transform=plt.gca().transAxes  # Use axes-relative coordinates
-)
+#plt.text(
+#    x=-0.1,  # Adjust based on plot dimensions
+#    y=1.05,  # Adjust based on plot dimensions
+#    s=f"IFS: {nifgs}",
+#    fontsize=10,
+#    transform=plt.gca().transAxes  # Use axes-relative coordinates
+#)
 
 
 # Guardar la imagen
