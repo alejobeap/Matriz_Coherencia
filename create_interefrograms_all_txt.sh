@@ -85,7 +85,7 @@ generate_connections_for_date() {
         local diff_months=$(month_diff "$start_date" "$end_date")
         if ((diff_days > 6 && diff_days <= 40)); then
             echo "${start_date}_${end_date}" >> "$OUTPUT_FILE"
-            echo "${start_date}_${end_date}" >> "$OUTPUT_FILE_2"
+            #echo "${start_date}_${end_date}" >> "$OUTPUT_FILE_2"
         fi
     done
 
@@ -108,6 +108,8 @@ generate_connections_for_date() {
     done
 }
 
+
+
 # Iterate over each date and generate connections
 for ((i = 0; i < ${#dates[@]}; i++)); do
     generate_connections_for_date "${dates[i]}" "$i"
@@ -115,19 +117,15 @@ done
 
 echo "Combinations written to $OUTPUT_FILE. Please check for a maximum of 12 months difference."
 
-# Abrir el archivo de entrada y leer las líneas
-with open("$INPUT_FILE", 'r') as f:
-    lines = f.readlines()
 
-# Crear combinaciones según la lógica descrita
-combinations = []
-for i in range(len(lines)):
-    for j in range(i + 1, min(i + 5, len(lines))):
-        combinations.append(f"{lines[i].strip()} to {lines[j].strip()}")
+# Read all lines into an array
+mapfile -t lines < "$INPUT_FILE"
 
-# Guardar las combinaciones en un archivo de salida
-with open("$OUTPUT_FILE_2", 'w') as f:
-    for combo in combinations:
-        f.write(combo + '\n')
+# Loop over lines and create combinations (up to next 4 lines)
+for ((i=0; i<${#lines[@]}; i++)); do
+    for ((j=i+1; j<i+5 && j<${#lines[@]}; j++)); do
+        echo "${lines[i]}_${lines[j]}" >> "$OUTPUT_FILE_2"
+    done
+done
 
-
+echo "Short combinations written to $OUTPUT_FILE_2"
