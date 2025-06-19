@@ -42,13 +42,27 @@ def crop_and_calculate_average(file_path, min_lon, max_lon, min_lat, max_lat, sa
             # Mostrar valores básicos
             print(f"Datos cargados: min={np.nanmin(data)}, max={np.nanmax(data)}, nodata={src.nodata}")
 
-            # Guardar imagen recortada si se solicita
+           # Guardar imagen recortada si se solicita
             if save_image:
+                plt.figure(figsize=(8, 6))
                 plt.imshow(data / np.nanmax(data), cmap='viridis')
-                plt.colorbar(label='Valores')
-                plt.title(f"Recorte de {file_path.stem}")
-                plt.savefig(f"recorte_{file_path.stem}.png")
+                plt.colorbar(label='Avg_Coh')
+                plt.title(f"Clip Area {file_path.stem}")
+                plt.savefig(f"recorte_{file_path.stem}.png",dpi=100)
                 print(f"Imagen recortada guardada como recorte_{file_path.stem}.png")
+
+
+            # Calcular promedio ignorando NaNs
+            average = np.nanmean(data[data != src.nodata] / np.nanmax(data))
+            standar = np.nanstd(data[data != src.nodata] / np.nanmax(data))
+
+            plt.figure(figsize=(8, 6))
+            plt.imshow(data / np.nanmax(data), cmap='viridis')
+            plt.colorbar(label='Avg_Coh')
+            plt.title(f"Clip Area {file_path.stem} Avg_Coh:{average}")
+            plt.savefig(f"{file_path.parent}/recorte_{file_path.stem}.png",dpi=100)
+            print(f"Imagen recortada guardada como recorte_{file_path.stem}.png")
+
 
             # Calcular promedio ignorando NaNs
             average = np.nanmean(data[data != src.nodata] / np.nanmax(data))
