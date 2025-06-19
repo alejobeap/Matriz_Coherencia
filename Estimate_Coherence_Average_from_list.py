@@ -8,7 +8,7 @@ from pathlib import Path
 
 # Archivos de entrada y salida
 volcanoes_file = "Volcanes_Chiles.txt"
-input_txt = "combination.txt"
+input_txt = "combination_longs.txt"
 output_txt = "output_averages_from_cc_tifs.txt"
 output_txt_std = "output_std_from_cc_tifs.txt"
 
