@@ -4,9 +4,9 @@ parent_dir=$(basename "$(dirname "$(pwd)")")
 current_dir=$(basename "$(pwd)")
 
 # Define file paths
-input_file="output_averages_from_cc_tifs.txt"
-output_file="filtered_IFS_average_cc_value.txt"
-mean_file="mean_value_${parent_dir}_${current_dir}.txt"
+input_file="Longs_output_averages_from_cc_tifs.txt"
+output_file="Longs_filtered_IFS_average_cc_value.txt"
+mean_file="Longs_mean_value_${parent_dir}_${current_dir}.txt"
 
 # Check if mean file exists
 if [ ! -f "$mean_file" ]; then
@@ -41,8 +41,7 @@ do
   fi
 
   # Check threshold condition using mean_value
-#  awk -v val="$col2" -v threshold="$mean_value" 'BEGIN{if(val > threshold) exit 0; else exit 1}'
-  awk -v val="$col2" -v threshold=0.4 'BEGIN{if(val > threshold) exit 0; else exit 1}'
+  awk -v val="$col2" -v threshold="$mean_value" 'BEGIN{if(val > threshold) exit 0; else exit 1}'
   if [[ $? -eq 0 ]]; then
     # Extract first column and append to output file
     echo "$line" | awk '{print $1}' >> "$output_file"
@@ -52,8 +51,8 @@ done < "$input_file"
 
 
 
-input_file="output_std_from_cc_tifs.txt"
-output_file="filtered_IFS_std_cc_value.txt"
+input_file="Longs_output_std_from_cc_tifs.txt"
+output_file="Longs_filtered_IFS_std_cc_value.txt"
 
 # Clear output file if it exists
 > "$output_file"

@@ -1,10 +1,9 @@
 #!/bin/bash
 
 # File containing the list of dates (one date per line in YYYYMMDD format)
-INPUT_FILE="listarslc.txt"
-OUTPUT_FILE="combination_all.txt"
-OUTPUT_FILE_1="combination_longs.txt"
-OUTPUT_FILE_2="combination_shorts.txt"
+INPUT_FILE="dates_longs.txt"
+OUTPUT_FILE="Longs_combination_all.txt"
+OUTPUT_FILE_1="Longs_combination_longs.txt"
 
 
 # Ensure the input file exists
@@ -28,14 +27,6 @@ if [ -f "$OUTPUT_FILE_1" ]; then
     > "$OUTPUT_FILE_1"
 else
     > "$OUTPUT_FILE_1"
-fi
-
-# Clear the output file
-if [ -f "$OUTPUT_FILE_2" ]; then
-    echo "Output file $OUTPUT_FILE_2 found. Erasing!"
-    > "$OUTPUT_FILE_2"
-else
-    > "$OUTPUT_FILE_2"
 fi
 
 
@@ -66,7 +57,7 @@ month_diff() {
 is_excluded_month() {
     local date="$1"
     local month=$((10#${date:4:2})) # Strip leading zero
-    if ((month >= 5 && month <= 9)); then
+    if ((month >= 6 && month <= 9)); then
         return 0 # Excluded
     else
         return 1 # Not excluded
@@ -90,7 +81,7 @@ generate_connections_for_date() {
     done
 
     # Generate month-based connections
-    for interval in 12 9 6 3; do
+    for interval in 12 9 6 4 3; do
         for ((j = index + 1; j < ${#dates[@]}; j++)); do
             local end_date="${dates[j]}"
             local diff_months=$(month_diff "$start_date" "$end_date")
@@ -116,16 +107,3 @@ for ((i = 0; i < ${#dates[@]}; i++)); do
 done
 
 echo "Combinations written to $OUTPUT_FILE. Please check for a maximum of 12 months difference."
-
-
-# Read all lines into an array
-mapfile -t lines < "$INPUT_FILE"
-
-# Loop over lines and create combinations (up to next 4 lines)
-for ((i=0; i<${#lines[@]}; i++)); do
-    for ((j=i+1; j<i+3 && j<${#lines[@]}; j++)); do
-        echo "${lines[i]}_${lines[j]}" >> "$OUTPUT_FILE_2"
-    done
-done
-
-echo "Short combinations written to $OUTPUT_FILE_2"

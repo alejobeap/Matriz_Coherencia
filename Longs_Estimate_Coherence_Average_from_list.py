@@ -8,9 +8,9 @@ from pathlib import Path
 
 # Archivos de entrada y salida
 volcanoes_file = "Volcanes_Chiles.txt"
-input_txt = "combination_shorts.txt"
-output_txt = "output_averages_from_cc_tifs.txt"
-output_txt_std = "output_std_from_cc_tifs.txt"
+input_txt = "Longs_combination_longs.txt"
+output_txt = "Longs_output_averages_from_cc_tifs.txt"
+output_txt_std = "Longs_output_std_from_cc_tifs.txt"
 
 # Función para obtener información de un volcán
 def get_volcano_info(volcano_name, volcanoes_file):
@@ -51,10 +51,10 @@ def crop_and_calculate_average(file_path, min_lon, max_lon, min_lat, max_lat, sa
                 plt.savefig(f"recorte_{file_path.stem}.png",dpi=100)
                 print(f"Imagen recortada guardada como recorte_{file_path.stem}.png")
 
-
             # Calcular promedio ignorando NaNs
             average = np.nanmean(data[data != src.nodata] / np.nanmax(data))
             standar = np.nanstd(data[data != src.nodata] / np.nanmax(data))
+
 
             plt.figure(figsize=(8, 6))
             plt.imshow(data / np.nanmax(data), cmap='viridis')

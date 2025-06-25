@@ -8,7 +8,7 @@ import sys
 # Get the parent and current directory names
 current_dir = os.path.basename(os.getcwd())
 parent_dir = os.path.basename(os.path.dirname(os.getcwd()))
-mean_file = f"mean_value_{parent_dir}_{current_dir}.txt"
+mean_file = f"Longs_mean_value_{parent_dir}_{current_dir}.txt"
 
 # Check if mean file exists
 if not os.path.isfile(mean_file):
@@ -81,7 +81,7 @@ plt.ylabel("Date1")
 # Guardar la imagen
 plt.tight_layout()
 
-output_file = f"matrix_{parent_dir}_{current_dir}.png"
+output_file = f"Longs_matrix_{parent_dir}_{current_dir}.png"
 
 #output_file = "mnatris.png"
 plt.savefig(output_file, dpi=100)
@@ -95,7 +95,7 @@ print(f"Imagen guardada como {output_file}")
 nifgs=0
 # Rellenar la matriz con los valores de coherencia
 for _, row in df.iterrows():
-    if row["coherence"]>0.4: #mean_value:
+    if row["coherence"]>mean_value:
       i = unique_dates1.index(row["date1"])
       j = unique_dates2.index(row["date2"])
       matrix_filt[i, j] = row["coherence"]
@@ -130,7 +130,7 @@ plt.ylabel("Date1")
 # Guardar la imagen
 plt.tight_layout()
 
-output_file = f"filtered_matrix_{parent_dir}_{current_dir}.png"
+output_file = f"Longs_filtered_matrix_{parent_dir}_{current_dir}.png"
 
 #output_file = "filtered_matriz.png"
 plt.savefig(output_file, dpi=100)
