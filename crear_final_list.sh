@@ -20,3 +20,14 @@ if [[ -f $output ]]; then
 else
     echo "Failed to create the output file."
 fi
+
+parent_dir=$(basename "$(dirname "$(pwd)")")
+current_dir=$(basename "$(pwd)")
+
+
+echo "framebatch_gapfill.sh -l -n 1 -P -i /work/scratch-pw3/licsar/alejobea/batchdir/${parent_dir}/${current_dir}/IFSforLiCSBAS.txt -o 5 480 7 2"
+
+framebatch_gapfill.sh -l -n 1 -P -i /work/scratch-pw3/licsar/alejobea/batchdir/${parent_dir}/${current_dir}/IFSforLiCSBAS.txt -o 5 480 7 2
+
+
+
