@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ -d "GEOC" ]; then
+    mv GEOC GEOC_longs
+else
+    mkdir GEOC
+fi
+
 # Define file names
 file1="standar_list.txt"
 file2="Longs_filtered_IFS_average_cc_value.txt"
