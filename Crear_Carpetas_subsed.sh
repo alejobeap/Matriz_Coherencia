@@ -34,6 +34,9 @@ for CARPETA in "${CARPETAS[@]}"; do
   mkdir -p "$CARPETA/geo"
   mkdir -p "$CARPETA/RSLC"
   mkdir -p "$CARPETA/SLC"
+  mkdir -p "$CARPETA/GEOC"
+  mkdir -p "$CARPETA/GEOC/geo"
+  
   
 # Check if geo.m or geo exists and copy accordingly
   if [ -d "$RUTA_BASE/$CARPETA/geo.m" ]; then
@@ -64,7 +67,7 @@ for CARPETA in "${CARPETAS[@]}"; do
 #  scp -r "$RUTA_BASE/$CARPETA/SLC/" "$CARPETA/" 2>/dev/null
   rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/SLC/" "$CARPETA/SLC/" 2>/dev/null
 
-
+  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/GEOC.meta.30m/" "$CARPETA/GEOC/geo/" 2>/dev/null
   # Al final de cada carpeta, clonar repo y mover contenido
   echo "Clonando Matriz_Coherencia en $CARPETA..."
   (
