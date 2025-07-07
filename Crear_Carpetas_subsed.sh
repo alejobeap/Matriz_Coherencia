@@ -39,8 +39,8 @@ for CARPETA in "${CARPETAS[@]}"; do
   
   
 # Check if geo.m or geo exists and copy accordingly
-  if [ -d "$RUTA_BASE/$CARPETA/geo.m" ]; then
-    GEO_FOLDER="geo.m"
+  if [ -d "$RUTA_BASE/$CARPETA/geo.30m" ]; then
+    GEO_FOLDER="geo.30m"
   elif [ -d "$RUTA_BASE/$CARPETA/geo" ]; then
     GEO_FOLDER="geo"
   else
