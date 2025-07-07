@@ -76,7 +76,7 @@ for CARPETA in "${CARPETAS[@]}"; do
     mv Matriz_Coherencia/* ./
     rm -rf Matriz_Coherencia
     chmod +x *.sh
-    sbatch --qos=high --output=Multilook.out --error=Multilook.err --job-name=Multilook_$CARPETA -n 8 --time=23:59:00 --mem=65536 -p comet --account=comet_lics --partition=standard --wrap="./multilookRSLC.sh"
+    #sbatch --qos=high --output=Multilook.out --error=Multilook.err --job-name=Multilook_$CARPETA -n 8 --time=23:59:00 --mem=65536 -p comet --account=comet_lics --partition=standard --wrap="./multilookRSLC.sh"
 
   )
 done
