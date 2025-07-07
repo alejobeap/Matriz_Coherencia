@@ -30,6 +30,17 @@ fi
 TOTAL_PASOS=$((${#CARPETAS[@]} * 3))
 PASO_ACTUAL=0
 
+
+filename="$RUTA_BASE/corners_clip.149A_11428_131313"
+basename="${filename#*.}"
+
+# Check if sourceframe.txt exists and delete it
+[ -f sourceframe.txt ] && rm sourceframe.txt
+
+# Write the extracted basename to sourceframe.txt
+echo "$basename" > sourceframe.txt
+
+
 for CARPETA in "${CARPETAS[@]}"; do
   mkdir -p "$CARPETA/geo"
   mkdir -p "$CARPETA/RSLC"
@@ -68,6 +79,10 @@ for CARPETA in "${CARPETAS[@]}"; do
   rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/SLC/" "$CARPETA/SLC/" 2>/dev/null
 
   rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/GEOC.meta.30m/" "$CARPETA/GEOC/geo/" 2>/dev/null
+  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/GEOC.meta.30m/*" "$CARPETA/GEOC/" 2>/dev/null
+
+
+
   # Al final de cada carpeta, clonar repo y mover contenido
   echo "Clonando Matriz_Coherencia en $CARPETA..."
   (
@@ -82,4 +97,3 @@ for CARPETA in "${CARPETAS[@]}"; do
 done
 
 echo "Proceso finalizado."
-
