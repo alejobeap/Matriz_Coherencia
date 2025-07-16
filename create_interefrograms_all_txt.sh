@@ -2,8 +2,6 @@
 
 # File containing the list of dates (one date per line in YYYYMMDD format)
 INPUT_FILE="listarslc.txt"
-OUTPUT_FILE="combination_all.txt"
-OUTPUT_FILE_1="combination_longs.txt"
 OUTPUT_FILE_2="combination_shorts.txt"
 
 
@@ -13,22 +11,6 @@ if [ ! -f "$INPUT_FILE" ]; then
     exit 1
 fi
 
-# Clear the output file
-if [ -f "$OUTPUT_FILE" ]; then
-    echo "Output file $OUTPUT_FILE found. Erasing!"
-    > "$OUTPUT_FILE"
-else
-    > "$OUTPUT_FILE"
-fi
-
-
-# Clear the output file
-if [ -f "$OUTPUT_FILE_1" ]; then
-    echo "Output file $OUTPUT_FILE_1 found. Erasing!"
-    > "$OUTPUT_FILE_1"
-else
-    > "$OUTPUT_FILE_1"
-fi
 
 # Clear the output file
 if [ -f "$OUTPUT_FILE_2" ]; then
