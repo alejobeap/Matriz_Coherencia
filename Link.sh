@@ -13,7 +13,7 @@ threshold_date2=$(date +%Y%m%d)  # Fecha actual automática
 mkdir -p GEOC
 cd GEOC || exit 1
 
-# Obtener interferogramas válidos primero
+# Obtener interferogramas válidos
 valid_dirs=()
 for dir in "$FRAMEdir"/interferograms/*; do
     [[ -d "$dir" ]] || continue
@@ -31,14 +31,33 @@ done
 total=${#valid_dirs[@]}
 count=0
 
-# Hacer enlace simbólico y mostrar progreso
-for dir in "${valid_dirs[@]}"; do
-    ln -sf "$dir" ./
+# Enlazar solo si es necesario
+for full_path in "${valid_dirs[@]}"; do
+    dir_name=$(basename "$full_path")
+    link_target="$PWD/$dir_name"
+
+    if [[ -L "$link_target" ]]; then
+        current_target=$(readlink "$link_target")
+        if [[ "$current_target" == "$full_path" ]]; then
+            # Enlace ya existe correctamente
+            :
+        else
+            # Apunta a otro lugar, actualizar
+            ln -sf "$full_path" "$link_target"
+        fi
+    elif [[ -e "$link_target" ]]; then
+        echo "Aviso: '$dir_name' existe pero no es un enlace. No se toca."
+        continue
+    else
+        ln -s "$full_path" "$link_target"
+    fi
+
     count=$((count + 1))
-    percent=$(( 100 * count / total ))
+    percent=$((100 * count / total))
     echo -ne "Enlazando: $count de $total [$percent%]\r"
 done
-echo -e "\nListo: Se enlazaron $count interferogramas."
+
+echo -e "\nListo: Se enlazaron/verificaron $count interferogramas."
 
 # Eliminar geo.mli.tif anterior y copiar uno nuevo
 rm -f ./*geo.mli.tif
