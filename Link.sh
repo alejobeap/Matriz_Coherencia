@@ -1,52 +1,57 @@
 #!/bin/bash
 
-FRAME=$(basename "$(pwd)") #"${1}"
-TRACK="$(echo $FRAME | cut -c1-3 | bc)"
+# Variables base
+FRAME=$(basename "$(pwd)")
+TRACK=$(echo "$FRAME" | cut -c1-3 | bc)
 FRAMEdir="$LiCSAR_public/$TRACK/$FRAME"
+
+# Fechas
 threshold_date="20141001"
-threshold_date2="20250601"
+threshold_date2=$(date +%Y%m%d)  # Fecha actual automática
 
+# Crear y moverse a carpeta GEOC
 mkdir -p GEOC
-cd GEOC
+cd GEOC || exit 1
 
-total_steps=5  # Total number of steps in the process
-current_step=0 # Initialize the step counter
+# Contador de interferogramas
+total_count=0
+linked_count=0
 
-update_progress() {
-    current_step=$((current_step + 1))
-    progress=$((current_step * 100 / total_steps))
-    echo "Progress: ${progress}% completed."
-}
-
-# Step 1: Copy interferograms
-update_progress
-for dir in $(ls $FRAMEdir/interferograms/); do
-    file_dates="$dir"
-    file_date1=$(echo $file_dates | cut -d '_' -f 1)
-    file_date2=$(echo $file_dates | cut -d '_' -f 2)
+# Copiar interferogramas válidos según fechas
+for dir in "$FRAMEdir"/interferograms/*; do
+    [[ -d "$dir" ]] || continue
+    total_count=$((total_count + 1))
     
+    file_dates=$(basename "$dir")
+    file_date1=$(echo "$file_dates" | cut -d '_' -f 1)
+    file_date2=$(echo "$file_dates" | cut -d '_' -f 2)
+
     if [[ $file_date1 -gt $threshold_date && $file_date2 -gt $threshold_date && $file_date2 -lt $threshold_date2 && $file_date1 -lt $threshold_date2 ]]; then
-        ln -sf "$FRAMEdir/interferograms/$dir" ./
+        ln -sf "$dir" .
+        linked_count=$((linked_count + 1))
     fi
 done
 
-# Step 2: Copy single geo.mli.tif file
-update_progress
-rm -rf ./*geo.mli.tif
-cp $(ls $FRAMEdir/epochs/20*/*.geo.mli.tif | head -1) ./${FRAME}.geo.mli.tif
+# Mostrar porcentaje de enlaces realizados
+if (( total_count > 0 )); then
+    percent=$(( 100 * linked_count / total_count ))
+    echo "Enlazados $linked_count de $total_count interferogramas ($percent%)"
+else
+    echo "No se encontraron interferogramas."
+fi
 
-# Step 3: Copy geo.[ENU].tif metadata files
-update_progress
-cp -f $FRAMEdir/metadata/*geo.[ENU].tif ./
+# Eliminar geo.mli.tif anterior y copiar uno nuevo
+rm -f ./*geo.mli.tif
+first_geo=$(find "$FRAMEdir"/epochs/20*/ -name '*.geo.mli.tif' | head -1)
+if [[ -n "$first_geo" ]]; then
+    cp "$first_geo" "${FRAME}.geo.mli.tif"
+else
+    echo "Advertencia: No se encontró archivo geo.mli.tif"
+fi
 
-# Step 4: Copy geo.hgt.tif file
-update_progress
-cp -f $FRAMEdir/metadata/*geo.hgt.tif ./
-
-# Step 5: Copy baselines file
-update_progress
-cp -f $FRAMEdir/metadata/baselines ./
+# Copiar metadatos adicionales
+cp -f "$FRAMEdir"/metadata/*geo.[ENU].tif . 2>/dev/null
+cp -f "$FRAMEdir"/metadata/*geo.hgt.tif . 2>/dev/null
+cp -f "$FRAMEdir"/metadata/baselines . 2>/dev/null
 
 cd ..
-
-echo "Processing complete!"
