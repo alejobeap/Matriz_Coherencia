@@ -13,32 +13,32 @@ threshold_date2=$(date +%Y%m%d)  # Fecha actual automática
 mkdir -p GEOC
 cd GEOC || exit 1
 
-# Contador de interferogramas
-total_count=0
-linked_count=0
-
-# Copiar interferogramas válidos según fechas
+# Obtener interferogramas válidos primero
+valid_dirs=()
 for dir in "$FRAMEdir"/interferograms/*; do
     [[ -d "$dir" ]] || continue
-    total_count=$((total_count + 1))
-    
+
     file_dates=$(basename "$dir")
     file_date1=$(echo "$file_dates" | cut -d '_' -f 1)
     file_date2=$(echo "$file_dates" | cut -d '_' -f 2)
 
     if [[ $file_date1 -gt $threshold_date && $file_date2 -gt $threshold_date && $file_date2 -lt $threshold_date2 && $file_date1 -lt $threshold_date2 ]]; then
-        ln -sf "$dir" .
-        linked_count=$((linked_count + 1))
+        valid_dirs+=("$dir")
     fi
 done
 
-# Mostrar porcentaje de enlaces realizados
-if (( total_count > 0 )); then
-    percent=$(( 100 * linked_count / total_count ))
-    echo "Enlazados $linked_count de $total_count interferogramas ($percent%)"
-else
-    echo "No se encontraron interferogramas."
-fi
+# Total de válidos
+total=${#valid_dirs[@]}
+count=0
+
+# Hacer enlace simbólico y mostrar progreso
+for dir in "${valid_dirs[@]}"; do
+    ln -sf "$dir" ./
+    count=$((count + 1))
+    percent=$(( 100 * count / total ))
+    echo -ne "Enlazando: $count de $total [$percent%]\r"
+done
+echo -e "\nListo: Se enlazaron $count interferogramas."
 
 # Eliminar geo.mli.tif anterior y copiar uno nuevo
 rm -f ./*geo.mli.tif
