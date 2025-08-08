@@ -1,16 +1,27 @@
 #!/bin/bash
 
 if [ -z "$1" ]; then
-  echo "Uso: $0 <nombre_carpeta>"
+  echo "Uso: $0 <nombre_carpeta> Numeroid(optional)"
   exit 1
 fi
 
 NOMBRE=$1
+NUMERO=$2
 
-NUMERO=$(python3 VER_Nombre_volcan.py "$NOMBRE" | tr -d '[]')
-if [ $? -ne 0 ] || [ -z "$NUMERO" ]; then
-  echo "Error ejecutando VER_Nombre_volcan.py o valor vacío"
-  exit 1
+#NUMERO=$(python3 VER_Nombre_volcan_V2.py "$NOMBRE" | tr -d '[]')
+#if [ $? -ne 0 ] || [ -z "$NUMERO" ]; then
+#  echo "Error ejecutando VER_Nombre_volcan.py o valor vacío"
+#  exit 1
+#fi
+
+
+# Si NUMERO no se pasa como argumento, lo buscamos con Python
+if [ -z "$NUMERO" ]; then
+    NUMERO=$(python3 VER_Nombre_volcan_V2.py "$NOMBRE" | tr -d '[]')
+    if [ $? -ne 0 ] || [ -z "$NUMERO" ]; then
+        echo "Error ejecutando VER_Nombre_volcan_V2.py o valor vacío"
+        exit 1
+    fi
 fi
 
 echo "Número obtenido: $NUMERO"
@@ -30,70 +41,90 @@ fi
 TOTAL_PASOS=$((${#CARPETAS[@]} * 3))
 PASO_ACTUAL=0
 
-
-filename="$RUTA_BASE/corners_clip.149A_11428_131313"
-basename="${filename#*.}"
-
-# Check if sourceframe.txt exists and delete it
-[ -f sourceframe.txt ] && rm sourceframe.txt
-
-# Write the extracted basename to sourceframe.txt
-echo "$basename" > sourceframe.txt
-
-
 for CARPETA in "${CARPETAS[@]}"; do
   mkdir -p "$CARPETA/geo"
   mkdir -p "$CARPETA/RSLC"
   mkdir -p "$CARPETA/SLC"
-  mkdir -p "$CARPETA/GEOC"
   mkdir -p "$CARPETA/GEOC/geo"
-  
-  
-# Check if geo.m or geo exists and copy accordingly
+
+  # Verificar carpeta geo.30m o geo
   if [ -d "$RUTA_BASE/$CARPETA/geo.30m" ]; then
     GEO_FOLDER="geo.30m"
   elif [ -d "$RUTA_BASE/$CARPETA/geo" ]; then
     GEO_FOLDER="geo"
   else
-    echo "No se encontró carpeta geo.m o geo en $RUTA_BASE/$CARPETA"
+    echo "No se encontró carpeta geo.30m o geo en $RUTA_BASE/$CARPETA"
     continue
   fi
 
   ((PASO_ACTUAL++))
   PORCENTAJE=$(( PASO_ACTUAL * 100 / TOTAL_PASOS ))
   echo "[$PORCENTAJE%] Copiando $GEO_FOLDER en $CARPETA/geo..."
-  #scp -r "$RUTA_BASE/$CARPETA/$GEO_FOLDER/"* "$CARPETA/geo/" 2>/dev/null
-  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/$GEO_FOLDER/"* "$CARPETA/geo/" 2>/dev/null
+  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/$GEO_FOLDER/" "$CARPETA/geo/" 2>&1 | tee -a ../debug.log
 
   ((PASO_ACTUAL++))
   PORCENTAJE=$(( PASO_ACTUAL * 100 / TOTAL_PASOS ))
   echo "[$PORCENTAJE%] Copiando RSLC en $CARPETA..."
-  #scp -r "$RUTA_BASE/$CARPETA/RSLC/" "$CARPETA/" 2>/dev/null
-  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/RSLC/" "$CARPETA/RSLC/" 2>/dev/null
-
+  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/RSLC/" "$CARPETA/RSLC/" 2>&1 | tee -a ../debug.log
 
   ((PASO_ACTUAL++))
   PORCENTAJE=$(( PASO_ACTUAL * 100 / TOTAL_PASOS ))
   echo "[$PORCENTAJE%] Copiando SLC en $CARPETA..."
-#  scp -r "$RUTA_BASE/$CARPETA/SLC/" "$CARPETA/" 2>/dev/null
-  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/SLC/" "$CARPETA/SLC/" 2>/dev/null
-
-  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/GEOC.meta.30m/" "$CARPETA/GEOC/geo/" 2>/dev/null
-  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/GEOC.meta.30m/*" "$CARPETA/GEOC/" 2>/dev/null
+  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/SLC/" "$CARPETA/SLC/" 2>&1 | tee -a ../debug.log
 
 
+  rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/local_config.py" "$CARPETA/SLC/"
 
-  # Al final de cada carpeta, clonar repo y mover contenido
+  # GEOC.meta.30m
+  if [ -d "$RUTA_BASE/$CARPETA/GEOC.meta.30m" ]; then
+    echo "Copiando GEOC.meta.30m..."
+    rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/GEOC.meta.30m/" "$CARPETA/GEOC/geo/" 2>&1 | tee -a ../debug.log
+    rsync -a --ignore-existing "$RUTA_BASE/$CARPETA/GEOC.meta.30m/" "$CARPETA/GEOC/" 2>&1 | tee -a ../debug.log
+  fi
+
+  # GEOC.MLI.30m
+  if [ -d "$RUTA_BASE/$CARPETA/GEOC.MLI.30m" ]; then
+    echo "Copiando GEOC.MLI.30m..."
+    find "$RUTA_BASE/$CARPETA/GEOC.MLI.30m" -type f | while read -r archivo; do
+      rsync -a --ignore-existing "$archivo" "$CARPETA/GEOC/geo/" 2>&1 | tee -a ../debug.log
+      rsync -a --ignore-existing "$archivo" "$CARPETA/GEOC/" 2>&1 | tee -a ../debug.log
+    done
+  fi
+
+  # Buscar archivo corners_clip.*
+  file=$(ls "$RUTA_BASE/$CARPETA"/corners_clip.* 2>/dev/null | head -n 1)
+  echo "$file"
+  if [[ -n "$file" ]]; then
+    basename="${file##*.}"
+    [ -f "$CARPETA/sourceframe.txt" ] && rm "$CARPETA/sourceframe.txt"
+    echo "$basename" > "$CARPETA/sourceframe.txt"
+
+    geo_file=$(ls "$CARPETA/GEOC/"*.geo.mli.tif 2>/dev/null | head -n 1)
+    if [ -n "$geo_file" ]; then
+      mv "$geo_file" "$CARPETA/GEOC/$basename.geo.mli.tif"
+    fi
+  else
+    echo "No corners_clip.* file found."
+  fi
+
+  # Renombrar .png si existe
+  png_file=$(ls "$CARPETA/GEOC/"*.geo.mli.png 2>/dev/null | head -n 1)
+  if [ -n "$png_file" ]; then
+    mv "$png_file" "$CARPETA/GEOC/$basename.geo.mli.png"
+  fi
+
+  # Clonar y mover Create_list_ifs
   echo "Clonando Matriz_Coherencia en $CARPETA..."
   (
     cd "$CARPETA" || { echo "No se pudo entrar a $CARPETA"; exit 1; }
-    git clone https://github.com/alejobeap/Matriz_Coherencia.git
-    mv Matriz_Coherencia/* ./
-    rm -rf Matriz_Coherencia
+    git clone https://github.com/alejobeap/Create_list_ifs.git
+    mv Create_list_ifs/* ./
+    rm -rf Create_list_ifs/
     chmod +x *.sh
-    #sbatch --qos=high --output=Multilook.out --error=Multilook.err --job-name=Multilook_$CARPETA -n 8 --time=23:59:00 --mem=65536 -p comet --account=comet_lics --partition=standard --wrap="./multilookRSLC.sh"
-
+    # sbatch --wrap="./multilookRSLC.sh" (descomentar si se desea ejecutar)
+    #./Run_all.sh
   )
+
 done
 
 echo "Proceso finalizado."
