@@ -26,8 +26,16 @@ fi
 
 echo "Número obtenido: $NUMERO"
 
-mkdir -p "$NOMBRE"
-cd "$NOMBRE" || { echo "No se pudo entrar a la carpeta $NOMBRE"; exit 1; }
+# Replace spaces, dots, and dashes with underscores
+NOMBRE_CLEAN=$(echo "$NOMBRE" | sed -E 's/[ .-]+/_/g')
+
+# Create the directory
+mkdir -p "$NOMBRE_CLEAN"
+
+echo "Directory created: $NOMBRE_CLEAN"
+
+
+cd "$NOMBRE_CLEAN" || { echo "No se pudo entrar a la carpeta $NOMBRE"; exit 1; }
 
 RUTA_BASE="/gws/nopw/j04/nceo_geohazards_vol1/projects/LiCS/proc/current/subsets/volc/$NUMERO"
 
