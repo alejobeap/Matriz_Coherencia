@@ -29,8 +29,11 @@ echo "Número obtenido: $NUMERO"
 # Replace spaces, dots, and dashes with underscores
 NOMBRE_CLEAN=$(echo "$NOMBRE" | sed -E 's/[ .-]+/_/g')
 
+
+
 # Create the directory
 mkdir -p "$NOMBRE_CLEAN"
+
 
 echo "Directory created: $NOMBRE_CLEAN"
 
@@ -125,6 +128,7 @@ for CARPETA in "${CARPETAS[@]}"; do
   echo "Clonando Matriz_Coherencia en $CARPETA..."
   (
     cd "$CARPETA" || { echo "No se pudo entrar a $CARPETA"; exit 1; }
+    echo "$NOMBRE" > "$NOMBRE_CLEAN"/Name.txt
     git clone https://github.com/alejobeap/Create_list_ifs.git
     mv Create_list_ifs/* ./
     rm -rf Create_list_ifs/
