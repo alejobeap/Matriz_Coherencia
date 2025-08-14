@@ -131,7 +131,7 @@ for CARPETA in "${CARPETAS[@]}"; do
 
   LiCSARweb="/gws/nopw/j04/nceo_geohazards_vol1/public/LiCSAR_products"
 
-  if [ -d "$LiCSARweb/$trackID/$frameID/metadata/baselines" ]; then
+  if [ -e "$LiCSARweb/$trackID/$frameID/metadata/baselines" ]; then
     rsync -a --ignore-existing \
         "$LiCSARweb/$trackID/$frameID/metadata/baselines" \
         "$CARPETA/GEOC/" 2>&1 | tee -a ../debug.log
