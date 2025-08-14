@@ -133,7 +133,7 @@ for CARPETA in "${CARPETAS[@]}"; do
 
   if [ -d "$LiCSARweb/$trackID/$frameID/metadata/baselines" ]; then
     rsync -a --ignore-existing \
-        "$LiCSARweb/$trackID/$frameID/metadata/baseline" \
+        "$LiCSARweb/$trackID/$frameID/metadata/baselines" \
         "$CARPETA/GEOC/" 2>&1 | tee -a ../debug.log
   fi
   
