@@ -118,6 +118,25 @@ for CARPETA in "${CARPETAS[@]}"; do
     echo "No corners_clip.* file found."
   fi
 
+  frameID="$basename"
+
+# Take everything before the first letter
+  digits="${frameID%%[A-Za-z]*}"
+
+# Remove leading zeros by forcing numeric interpretation
+  trackID=$((10#$digits))
+
+  echo "trackID=$trackID"
+
+
+  LiCSARweb="/gws/nopw/j04/nceo_geohazards_vol1/public/LiCSAR_products"
+
+  if [ -d "$LiCSARweb/$trackID/$frameID/metadata/baseline" ]; then
+    rsync -a --ignore-existing \
+        "$LiCSARweb/$trackID/$frameID/metadata/baseline" \
+        "$CARPETA/GEOC/" 2>&1 | tee -a ../debug.log
+  fi
+  
   # Renombrar .png si existe
   png_file=$(ls "$CARPETA/GEOC/"*.geo.mli.png 2>/dev/null | head -n 1)
   if [ -n "$png_file" ]; then
