@@ -147,7 +147,7 @@ for CARPETA in "${CARPETAS[@]}"; do
   echo "Clonando Matriz_Coherencia en $CARPETA..."
   (
     cd "$CARPETA" || { echo "No se pudo entrar a $CARPETA"; exit 1; }
-    echo "$NOMBRE" > "$NOMBRE_CLEAN"/Name.txt
+    echo "$NOMBRE" > VolcanoName.txt
     git clone https://github.com/alejobeap/Create_list_ifs.git
     mv Create_list_ifs/* ./
     rm -rf Create_list_ifs/
