@@ -172,7 +172,7 @@ for CARPETA in "${CARPETAS[@]}"; do
   
     LiCSARweb="/gws/nopw/j04/nceo_geohazards_vol1/public/LiCSAR_products"
     epochdir="$LiCSARweb/$trackID/$frameID/epochs"
-    gacosdir="$CARPETA/GACOS"
+    gacosdir="GACOS"
   
     # Ensure GACOS directory exists
     mkdir -p "$gacosdir"
@@ -192,7 +192,7 @@ for CARPETA in "${CARPETAS[@]}"; do
   
     LiCSARweb="/gws/nopw/j04/nceo_geohazards_vol1/public/LiCSAR_products"
     epochdir="$LiCSARweb/$trackID/$frameID/epochs"
-    era5dir="$CARPETA/ERA5"
+    era5dir="ERA5"
   
     # Ensure GACOS directory exists
     mkdir -p "$era5dir"
