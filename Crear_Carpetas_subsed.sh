@@ -130,7 +130,7 @@ for CARPETA in "${CARPETAS[@]}"; do
 
 
   LiCSARweb="/gws/nopw/j04/nceo_geohazards_vol1/public/LiCSAR_products"
-
+  echo "$LiCSARweb/$trackID/$frameID/metadata/baselines"
   if [ -e "$LiCSARweb/$trackID/$frameID/metadata/baselines" ]; then
     rsync -a --ignore-existing \
         "$LiCSARweb/$trackID/$frameID/metadata/baselines" \
@@ -143,12 +143,62 @@ for CARPETA in "${CARPETAS[@]}"; do
     mv "$png_file" "$CARPETA/GEOC/$basename.geo.mli.png"
   fi
 
+
+
+  set -euo pipefail
+
+  # Remove leading zeros by forcing numeric interpretation
+  trackID=$((10#$digits))
+  echo "trackID=$trackID"
+
+
+  echo "############# GACOS link ##############"
+
+  LiCSARweb="/gws/nopw/j04/nceo_geohazards_vol1/public/LiCSAR_products"
+  epochdir="$LiCSARweb/$trackID/$frameID/epochs"
+  gacosdir="$CARPETA/GACOS"
+
+  # Ensure GACOS directory exists
+  mkdir -p "$gacosdir"
+
+  # Iterate over epochs
+  for epoch in "$epochdir"/*; do
+    epoch=$(basename "$epoch")
+    gacosfile="$epochdir/$epoch/$epoch.sltd.geo.tif"
+
+    if [[ -f "$gacosfile" ]]; then
+       ln -sf "$gacosfile" "$gacosdir/$epoch.sltd.geo.tif"
+    fi
+
+  done
+
+  echo "############# ERA5 link ##############"
+
+  LiCSARweb="/gws/nopw/j04/nceo_geohazards_vol1/public/LiCSAR_products"
+  epochdir="$LiCSARweb/$trackID/$frameID/epochs"
+  era5dir="$CARPETA/ERA5"
+
+  # Ensure GACOS directory exists
+  mkdir -p "$era5dir"
+
+  # Iterate over epochs
+  for epoch in "$epochdir"/*; do
+    epoch=$(basename "$epoch")
+    era5file="$epochdir/$epoch/$epoch.icams.sltd.geo.tif"
+
+    if [[ -f "$era5file" ]]; then
+       ln -sf "$era5file" "$era5dir/$epoch.icams.sltd.geo.tif"
+    fi
+
+  done
+
+
+
   # Clonar y mover Create_list_ifs
   echo "Clonando Matriz_Coherencia en $CARPETA..."
   (
     cd "$CARPETA" || { echo "No se pudo entrar a $CARPETA"; exit 1; }
-    echo "$NOMBRE" > VolcanoName.txt
-    echo "$NUMERO" > Subsetnumber.txt
+    echo "$NOMBRE" > NameVolcano.txt
     git clone https://github.com/alejobeap/Create_list_ifs.git
     mv Create_list_ifs/* ./
     rm -rf Create_list_ifs/
