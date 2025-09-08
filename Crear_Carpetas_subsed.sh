@@ -191,6 +191,7 @@ for CARPETA in "${CARPETAS[@]}"; do
   (
     cd "$CARPETA" || { echo "No se pudo entrar a $CARPETA"; exit 1; }
     echo "$NOMBRE" > NameVolcano.txt
+    echo "$NUMERO" > SubsetID.txt
     git clone https://github.com/alejobeap/Create_list_ifs.git
     mv Create_list_ifs/* ./
     rm -rf Create_list_ifs/
