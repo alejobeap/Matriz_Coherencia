@@ -193,7 +193,7 @@ for CARPETA in "${CARPETAS[@]}"; do
     echo "$NOMBRE" > NameVolcano.txt
     echo "$NUMERO" > SubsetID.txt
     git clone https://github.com/alejobeap/Create_list_ifs.git
-    mv Create_list_ifs/* ./
+    mv -f Create_list_ifs/* ./
     rm -rf Create_list_ifs/
     chmod +x *.sh
     # sbatch --wrap="./multilookRSLC.sh" (descomentar si se desea ejecutar)
